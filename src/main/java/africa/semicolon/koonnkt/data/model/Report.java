@@ -1,18 +1,34 @@
 package africa.semicolon.koonnkt.data.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String reporter;
-    private String reported;
+
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "reporter_id")
+    private Users reporter;
+
+    @ManyToOne
+    @JoinColumn(name = "reported_id")
+    private Users reported;
+
+   private LocalDateTime reportDate;
+
+    public LocalDateTime getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(LocalDateTime reportDate) {
+        this.reportDate = reportDate;
+    }
 
     public Long getId() {
         return id;
@@ -22,27 +38,27 @@ public class Report {
         this.id = id;
     }
 
-    public String getReporter() {
-        return reporter;
-    }
-
-    public void setReporter(String reporter) {
-        this.reporter = reporter;
-    }
-
-    public String getReported() {
-        return reported;
-    }
-
-    public void setReported(String reported) {
-        this.reported = reported;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Users getReporter() {
+        return reporter;
+    }
+
+    public void setReporter(Users reporter) {
+        this.reporter = reporter;
+    }
+
+    public Users getReported() {
+        return reported;
+    }
+
+    public void setReported(Users reported) {
+        this.reported = reported;
     }
 }

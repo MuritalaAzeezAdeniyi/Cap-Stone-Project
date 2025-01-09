@@ -1,18 +1,10 @@
-package africa.semicolon.koonnkt.dto.request;
+package africa.semicolon.koonnkt.dto.response;
 
-public class ReportRequest {
+public class ReportResponse {
     private String reporter;
     private String reported;
     private String description;
-    private String username;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    private String message;
 
     public String getReporter() {
         return reporter;
@@ -36,5 +28,13 @@ public class ReportRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
