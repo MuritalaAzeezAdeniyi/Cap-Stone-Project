@@ -12,6 +12,8 @@ import africa.semicolon.koonnkt.dto.response.UpdateUserDetailResponse;
 import africa.semicolon.koonnkt.dto.response.UserLoginResponse;
 import africa.semicolon.koonnkt.execption.InvalidCredentialException;
 import africa.semicolon.koonnkt.execption.UserExistException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,14 +26,17 @@ public class UserServicesImpl implements UsersService {
     private UsersRepo userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    private static final Logger logger = LoggerFactory.getLogger(UserServicesImpl.class);
     @Override
     public RegisterUserResponse registerUser(RegisterUserRequest registerUserRequest) throws UserExistException, InvalidCredentialException {
         validateUserEmail(registerUserRequest);
         validateUserInfo(registerUserRequest);
+        phoneNumberValidation(registerUserRequest.getPhoneNumber());
         Users user = new Users();
         user.setEmail(registerUserRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerUserRequest.getPassword()));
+        String encodedPassword = passwordEncoder.encode(registerUserRequest.getPassword());
+        logger.info("Encoded password at registration: " + encodedPassword);
+        user.setPassword(encodedPassword);
         user.setUsername(registerUserRequest.getUsername());
         user.setFirstname(registerUserRequest.getFirstname());
         user.setLastname(registerUserRequest.getLastname());
@@ -57,15 +62,66 @@ public class UserServicesImpl implements UsersService {
 
     @Override
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) throws InvalidCredentialException {
-         Users user = userRepository.findByUsername(userLoginRequest.getUsername());
-         if (user == null || !passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
-             throw new InvalidCredentialException("Invalid credentials");
-         }
-          UserLoginResponse loginResponse = new UserLoginResponse();
-          loginResponse.setUsername(user.getUsername());
-          loginResponse.setRole(user.getRole());
-          loginResponse.setMessage("User logged in successfully");
+//         Users user = userRepository.findByUsername(userLoginRequest.getUsername());
+//         if (user == null || !passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
+//             throw new InvalidCredentialException("Invalid credentials");
+//         }
+//          UserLoginResponse loginResponse = new UserLoginResponse();
+//          loginResponse.setUsername(user.getUsername());
+//          loginResponse.setRole(user.getRole());
+//          loginResponse.setMessage("User logged in successfully");
+//        return loginResponse;
+//
+//        Users user = userRepository.findByUsername(userLoginRequest.getUsername());
+//        if (user == null) { throw new InvalidCredentialException("Invalid credentials"); }
+//
+//        logger.info("Provided password: {}", userLoginRequest.getPassword());
+//        logger.info("Stored encoded password: {}", user.getPassword());
+//        boolean matches = passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword());
+//        logger.info("Password matches: {}", matches);
+//        if (!matches) { throw new InvalidCredentialException("Invalid credentials"); }
+//
+//
+//        UserLoginResponse loginResponse = new UserLoginResponse();
+//        loginResponse.setUsername(user.getUsername());
+//        loginResponse.setRole(user.getRole());
+//        loginResponse.setMessage("User logged in successfully");
+//        return loginResponse;
+//
+
+        // Fetch user from the database
+        Users user = userRepository.findByUsername(userLoginRequest.getUsername());
+        if (user == null) {
+            throw new InvalidCredentialException("Invalid credentials");
+        }
+
+        logger.info("Provided password: {}", userLoginRequest.getPassword());
+        logger.info("Stored encoded password: {}", user.getPassword());
+
+// Log the lengths of the passwords
+        logger.info("Length of provided password: {}", userLoginRequest.getPassword().length());
+        logger.info("Length of stored encoded password: {}", user.getPassword().length());
+
+// Check if the raw password matches the encoded password
+        boolean matches = passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword());
+        logger.info("Password matches: {}", matches);
+
+// If the passwords don't match, throw an exception
+        if (!matches) {
+            throw new InvalidCredentialException("Invalid credentials");
+        }
+
+        UserLoginResponse loginResponse = new UserLoginResponse();
+        loginResponse.setUsername(user.getUsername());
+        loginResponse.setRole(user.getRole());
+        loginResponse.setMessage("User logged in successfully");
         return loginResponse;
+
+
+
+
+
+
     }
 
 
@@ -123,16 +179,16 @@ public class UserServicesImpl implements UsersService {
 
     @Override
     public UpdateUserDetailResponse updateUserDetail(Long userId, UpdateUserDetailRequest updateUserDetailRequest) throws InvalidCredentialException, UserExistException {
-        Users UserFound = findUserById(userId);
-        if (UserFound != null) {
-            updateUserDetailRequest.setFirstname(updateUserDetailRequest.getFirstname());
-            updateUserDetailRequest.setLastname(updateUserDetailRequest.getLastname());
-            updateUserDetailRequest.setEmail(updateUserDetailRequest.getEmail());
-            updateUserDetailRequest.setPassword(updateUserDetailRequest.getPassword());
-            updateUserDetailRequest.setRole(updateUserDetailRequest.getRole());
-            updateUserDetailRequest.setPhoneNumber(updateUserDetailRequest.getPhoneNumber());
-            updateUserDetailRequest.setUsername(updateUserDetailRequest.getUsername());
-            userRepository.save(UserFound);
+        Users userFound = findUserById(userId);
+        if (userFound != null) {
+           userFound .setFirstname(updateUserDetailRequest.getFirstname());
+            userFound.setLastname(updateUserDetailRequest.getLastname());
+            userFound.setEmail(updateUserDetailRequest.getEmail());
+            userFound.setPassword(updateUserDetailRequest.getPassword());
+            userFound.setRole(updateUserDetailRequest.getRole());
+            userFound.setPhoneNumber(updateUserDetailRequest.getPhoneNumber());
+            userFound.setUsername(updateUserDetailRequest.getUsername());
+            userRepository.save(userFound);
 
             UpdateUserDetailResponse updateUserDetailResponse = new UpdateUserDetailResponse();
             updateUserDetailResponse.setMessage("user detail successfully updated");
@@ -143,5 +199,18 @@ public class UserServicesImpl implements UsersService {
 
     }
 
+    public void phoneNumberValidation(String phoneNumber){
+        if(phoneNumber.length()!= 11){
+            throw new RuntimeException("number must have 11 digits");
+        }
+    }
 
+    private void passwordValidation(Users users, String password) throws InvalidCredentialException {
+        boolean isPasswordMatch =
+                passwordEncoder.matches(password, users.getPassword()
+                );
+        if (!isPasswordMatch) {
+            throw new InvalidCredentialException("invalid credentials!");
+        }
+    }
 }

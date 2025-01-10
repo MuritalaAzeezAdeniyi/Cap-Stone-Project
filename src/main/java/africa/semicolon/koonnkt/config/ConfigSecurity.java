@@ -43,6 +43,7 @@ public class ConfigSecurity {
                              .requestMatchers("api/users/blockUser").hasRole("ADMIN")
                              .requestMatchers("api/users/unblockUser").hasRole("ADMIN")
                              .requestMatchers("api/users/updateUserDetail/").permitAll()
+                             .requestMatchers("api/report/makeReport").hasAnyRole("PASSENGER", "DRIVER")
                              .anyRequest().authenticated())
                      .httpBasic(Customizer.withDefaults())
                      .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -77,14 +78,14 @@ public class ConfigSecurity {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
              authProvider.setUserDetailsService(userDetailsService);
-             authProvider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+             authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
 }
