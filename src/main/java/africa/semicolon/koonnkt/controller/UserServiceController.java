@@ -30,7 +30,7 @@ public class UserServiceController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(UserLoginRequest userLoginRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         try {
             UserLoginResponse loginResponse = userServices.loginUser(userLoginRequest);
             return new ResponseEntity<>(new ApiResponse(true, loginResponse), HttpStatus.OK);
