@@ -43,9 +43,6 @@ public class RequestRideImpl implements RequestRideService {
             requestRide.setDepartureTime(LocalDateTime.now());
             requestRideRepo.save(requestRide);
 
-            postRideService.findMatchingRide(requestRide.getDestinationLocation(),
-                    requestRide.getDestinationLocation(), requestRide.getPassenger());
-
             ResponseRequestRide responseRequestRide = new ResponseRequestRide();
             responseRequestRide.setMessage("Successfully requested ride");
             return responseRequestRide;

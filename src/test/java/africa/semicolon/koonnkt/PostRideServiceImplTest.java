@@ -15,8 +15,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,14 +36,29 @@ public class PostRideServiceImplTest {
         postRideRequest.setDestinationLocation("Kano");
         postRideRequest.setDepartureTime(LocalDateTime.now());
 
-//
+
         mockMvc.perform(post("/api/PostRide/createRide")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRideRequest)))
                 .andExpect(status().isCreated());
-//
-//        PostRideResponse postRideResponse = postRideService.createPostRide(postRideRequest);
-//        assertThat(postRideResponse).isNotNull();
-//        assertThat(postRideResponse.getMessage()).isEqualTo("Successfully created a new post ride");
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "Azeez", roles = {"DRIVER"})
+    public void testThatDriveCanPostAnotherRide() throws Exception {
+        PostRideRequest postRideRequest = new PostRideRequest();
+        postRideRequest.setDepartureLocation("AJA");
+        postRideRequest.setDestinationLocation("SABO");
+        postRideRequest.setDepartureTime(LocalDateTime.now());
+
+
+        mockMvc.perform(post("/api/PostRide/createRide")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRideRequest)))
+                .andExpect(status().isCreated());
+
+
     }
 }

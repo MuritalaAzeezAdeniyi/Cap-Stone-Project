@@ -12,11 +12,21 @@ public class PostRide {
     private String destinationLocation;
     private int availableSeat;
     private LocalDateTime departureTime;
+    private boolean notified;
 
 
     @ManyToOne
-    @JoinColumn(name = "driver_id")
+//    @JoinColumn(name = "driver_id")
     private Users driver;
+
+
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
+    }
 
     public Long getId() {
         return id;

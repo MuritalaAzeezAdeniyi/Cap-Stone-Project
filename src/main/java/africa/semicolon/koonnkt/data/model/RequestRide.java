@@ -11,10 +11,18 @@ public class RequestRide {
     private String departureLocation;
     private String destinationLocation;
     private LocalDateTime departureTime;
-
+    private boolean notified;
     @ManyToOne
     @JoinColumn(name = "passenger_id")
     private Users passenger;
+
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
+    }
 
     public Long getId() {
         return id;

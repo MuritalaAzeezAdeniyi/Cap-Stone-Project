@@ -107,5 +107,17 @@ public class UserServiceImplTest {
         assertThat(registerUserResponse.getUsername()).isEqualTo("Yayaha50");
 
     }
+ @Test
+    public void testThatUsersCanLogin() throws InvalidCredentialException, UserExistException {
+        String password = passwordEncoder.encode("Yaya22");
+        UserLoginRequest loginRequest = new UserLoginRequest();
+        loginRequest.setUsername("mfonm34");
+        loginRequest.setPassword("9090");
+        UserLoginResponse loginResponse = userServices.loginUser(loginRequest);
+        System.out.println(loginResponse);
+        assertThat(loginResponse).isNotNull();
+        assertThat(loginResponse.getUsername()).isEqualTo("mfonm34");
+
+    }
 
 }
