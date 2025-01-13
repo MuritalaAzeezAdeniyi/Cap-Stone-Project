@@ -9,6 +9,8 @@ import africa.semicolon.koonnkt.dto.request.UpdatePostRideRequest;
 import africa.semicolon.koonnkt.dto.response.DeletePostRide;
 import africa.semicolon.koonnkt.dto.response.PostRideResponse;
 import africa.semicolon.koonnkt.dto.response.UpdatePostRideResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,8 @@ public class PostRideServiceImpl implements PostRideService {
     private PostRideRepo postRideRepo;
     @Autowired
     private NotificationService notificationService;
+
+    private static final Logger logger = LoggerFactory.getLogger(PostRideServiceImpl.class);
 
     @Override
     public PostRideResponse createPostRide(PostRideRequest postRideRequest) {
@@ -115,45 +119,14 @@ public class PostRideServiceImpl implements PostRideService {
 
     }
 
-    public List<PostRide> findMatchingRide(String destinationLocation, String departureLocation, Users passenger) {
-
-        List<PostRide> matchingRides = postRideRepo.findByDepartureLocationAndDestinationLocation(normalizeString(departureLocation),
-                normalizeString(destinationLocation));
-
-        matchingRides.forEach(ride -> sendNotifications(ride, passenger));
-        return matchingRides;
-    }
 
     private String normalizeString(String input) {
         return input.trim().toLowerCase();
     }
 
 
-    private void sendNotifications(PostRide ride, Users passenger) {
-
-        Users driver = ride.getDriver();
-        String driverEmail = driver.getEmail();
-        String driverPhoneNumber = driver.getPhoneNumber();
-        String passengerEmail = passenger.getEmail();
-        String passengerPhoneNumber = passenger.getPhoneNumber();
-
-        String subject = "Ride Match Found!";
-
-        String driverMessage = "You have a new passenger request for your ride from " + ride.getDepartureLocation() +
-                " to " + ride.getDestinationLocation() + " on " + ride.getDepartureTime() +
-                "." + " Passenger Contact: " + passengerPhoneNumber;
 
 
-        String passengerMessage = "A ride match has been found for your request from " + ride.getDepartureLocation() +
-                " to " + ride.getDestinationLocation() + " on " + ride.getDepartureTime() +
-                "." + " Driver Contact: " + driverPhoneNumber;
-
-
-        notificationService.sendEmail(driverEmail, subject, driverMessage);
-        notificationService.sendEmail(passengerEmail, subject, passengerMessage);
-
-
-    }
 
 
 }

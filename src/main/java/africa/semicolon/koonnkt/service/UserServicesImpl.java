@@ -62,54 +62,22 @@ public class UserServicesImpl implements UsersService {
 
     @Override
     public UserLoginResponse loginUser(UserLoginRequest userLoginRequest) throws InvalidCredentialException {
-//         Users user = userRepository.findByUsername(userLoginRequest.getUsername());
-//         if (user == null || !passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
-//             throw new InvalidCredentialException("Invalid credentials");
-//         }
-//          UserLoginResponse loginResponse = new UserLoginResponse();
-//          loginResponse.setUsername(user.getUsername());
-//          loginResponse.setRole(user.getRole());
-//          loginResponse.setMessage("User logged in successfully");
-//        return loginResponse;
-//
-//        Users user = userRepository.findByUsername(userLoginRequest.getUsername());
-//        if (user == null) { throw new InvalidCredentialException("Invalid credentials"); }
-//
-//        logger.info("Provided password: {}", userLoginRequest.getPassword());
-//        logger.info("Stored encoded password: {}", user.getPassword());
-//        boolean matches = passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword());
-//        logger.info("Password matches: {}", matches);
-//        if (!matches) { throw new InvalidCredentialException("Invalid credentials"); }
-//
-//
-//        UserLoginResponse loginResponse = new UserLoginResponse();
-//        loginResponse.setUsername(user.getUsername());
-//        loginResponse.setRole(user.getRole());
-//        loginResponse.setMessage("User logged in successfully");
-//        return loginResponse;
-//
 
-        // Fetch user from the database
+        if (userLoginRequest.getUsername() == null || userLoginRequest.getPassword() == null) {
+            throw new IllegalArgumentException("Username and password must not be null");
+        }
+
         Users user = userRepository.findByUsername(userLoginRequest.getUsername());
-        if (user == null) {
-            throw new InvalidCredentialException("Invalid credentials");
-        }
+        if (user == null) { throw new InvalidCredentialException("Invalid credentials"); }
 
-        logger.info("Provided password: {}", userLoginRequest.getPassword());
-        logger.info("Stored encoded password: {}", user.getPassword());
+        logger.info("Provided password: " + userLoginRequest.getPassword());
+        logger.info("Stored encoded password: " + user.getPassword());
 
-// Log the lengths of the passwords
-        logger.info("Length of provided password: {}", userLoginRequest.getPassword().length());
-        logger.info("Length of stored encoded password: {}", user.getPassword().length());
-
-// Check if the raw password matches the encoded password
         boolean matches = passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword());
-        logger.info("Password matches: {}", matches);
+        logger.info("Password matches: " + matches);
+        if (!matches) { throw new InvalidCredentialException("Invalid credentials"); }
 
-// If the passwords don't match, throw an exception
-        if (!matches) {
-            throw new InvalidCredentialException("Invalid credentials");
-        }
+
 
         UserLoginResponse loginResponse = new UserLoginResponse();
         loginResponse.setUsername(user.getUsername());
