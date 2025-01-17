@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/PostRide")
+@CrossOrigin( origins = "*")
 public class PostRideController {
     @Autowired
     private PostRideService postRideService;

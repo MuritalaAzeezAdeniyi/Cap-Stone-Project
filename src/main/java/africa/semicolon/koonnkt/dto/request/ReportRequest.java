@@ -4,15 +4,6 @@ public class ReportRequest {
     private String reporter;
     private String reported;
     private String description;
-    private String username;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getReporter() {
         return reporter;
