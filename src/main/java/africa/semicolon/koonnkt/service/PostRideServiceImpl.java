@@ -119,6 +119,17 @@ public class PostRideServiceImpl implements PostRideService {
 
     }
 
+    @Override
+    public PostRide findRideById(Long id) {
+        Optional <PostRide> postRide = postRideRepo.findById(id);
+        if(postRide.isPresent()){
+            return postRide.get();
+        }
+        else {
+            throw new RuntimeException("ride not found");
+        }
+    }
+
 
     private String normalizeString(String input) {
         return input.trim().toLowerCase();

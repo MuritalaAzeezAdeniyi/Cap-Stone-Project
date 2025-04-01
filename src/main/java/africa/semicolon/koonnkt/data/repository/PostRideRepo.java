@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PostRideRepo extends JpaRepository<PostRide, Long> {
     List<PostRide> findByDepartureLocationAndDestinationLocation (String departureLocation, String destinationLocation);
     List<PostRide> findByDriver(Users driver);
+
 }

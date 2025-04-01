@@ -97,6 +97,7 @@
 package africa.semicolon.koonnkt.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -139,6 +140,9 @@ public class ConfigSecurity {
                         .requestMatchers("api/users/unblockUser").hasRole("ADMIN")
                         .requestMatchers("api/users/updateUserDetail/").permitAll()
                         .requestMatchers("api/report/makeReport").hasAnyRole("PASSENGER", "DRIVER")
+                        .requestMatchers("/initialize").permitAll()
+                        .requestMatchers("/makePayment").permitAll()
+                        .requestMatchers("/verify/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -152,7 +156,7 @@ public class ConfigSecurity {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost:5173/");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -167,8 +171,40 @@ public class ConfigSecurity {
         return authProvider;
     }
 
+    @Value("${paystack.api.key}")
+    private String payStackApi;
+
+    @Value("${paystack.url}")
+    private String payStackUrl;
+    @Value("${stack.url}")
+    private String stackUrl;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    public String getPayStackApi() {
+        return payStackApi;
+    }
+
+    public void setPayStackApi(String payStackApi) {
+        this.payStackApi = payStackApi;
+    }
+
+    public String getPayStackUrl() {
+        return payStackUrl;
+    }
+
+    public void setPayStackUrl(String payStackUrl) {
+        this.payStackUrl = payStackUrl;
+    }
+
+    public String getStackUrl() {
+        return stackUrl;
+    }
+
+    public void setStackUrl(String stackUrl) {
+        this.stackUrl = stackUrl;
     }
 }

@@ -2,6 +2,7 @@ package africa.semicolon.koonnkt.data.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 @Entity
 public class PostRide {
@@ -13,12 +14,20 @@ public class PostRide {
     private int availableSeat;
     private LocalDateTime departureTime;
     private boolean notified;
+    private BigDecimal price;
 
 
     @ManyToOne
 //    @JoinColumn(name = "driver_id")
     private Users driver;
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public boolean isNotified() {
         return notified;
