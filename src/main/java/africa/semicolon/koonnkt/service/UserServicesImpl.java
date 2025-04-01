@@ -70,13 +70,9 @@ public class UserServicesImpl implements UsersService {
         Users user = userRepository.findByUsername(userLoginRequest.getUsername());
         if (user == null) { throw new InvalidCredentialException("Invalid credentials"); }
 
-        logger.info("Provided password: " + userLoginRequest.getPassword());
-        logger.info("Stored encoded password: " + user.getPassword());
-
         boolean matches = passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword());
         logger.info("Password matches: " + matches);
         if (!matches) { throw new InvalidCredentialException("Invalid credentials"); }
-
 
 
         UserLoginResponse loginResponse = new UserLoginResponse();

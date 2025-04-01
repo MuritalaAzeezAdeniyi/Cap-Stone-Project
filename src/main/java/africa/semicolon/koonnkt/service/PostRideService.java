@@ -14,4 +14,5 @@ public interface PostRideService {
     List<PostRide> getRidePostByDriver();
     UpdatePostRideResponse updatePostRide( Long postRideId, UpdatePostRideRequest postRideRequest);
     DeletePostRide deletePostRide(Long postRideId);
+    PostRide findRideById(Long id);
 }
