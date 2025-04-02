@@ -1,0 +1,27 @@
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: AdeNiyi_12
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: AdeNiyi_12
+    ports:
+      - "3305:3305"
+    networks:
+      - abdul
+
+  app:
+    image: docker_comp
+    environment:
+      DOCKER_HUB_USERNAME: adeniyi12
+      DOCKER_HUB_PASSWORD: AdeNiyi_12
+    ports:
+      - "8082:8080"
+    networks:
+      - abdul
+
+networks:
+  abdul:
+    driver: bridge
