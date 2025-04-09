@@ -119,8 +119,12 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class ConfigSecurity {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+
+    private final UserDetailsService userDetailsService;
+
+    public ConfigSecurity(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
