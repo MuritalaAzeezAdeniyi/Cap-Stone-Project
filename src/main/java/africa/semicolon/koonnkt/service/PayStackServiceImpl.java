@@ -31,8 +31,12 @@ import java.net.URI;
 public class PayStackServiceImpl implements PaystackService {
     @Autowired
     private PostRideServiceImpl postRideService;
-    @Autowired
-    private ConfigSecurity configSecurity;
+
+    final private ConfigSecurity configSecurity;
+
+    public PayStackServiceImpl(ConfigSecurity configSecurity) {
+        this.configSecurity = configSecurity;
+    }
 
     @Override
 
