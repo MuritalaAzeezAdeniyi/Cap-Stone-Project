@@ -180,37 +180,13 @@ public class ConfigSecurity {
     @Value("${paystack.api.key}")
     private String payStackApi;
 
-    @Value("${paystack.url}")
-    private String payStackUrl;
-    @Value("${stack.url}")
-    private String stackUrl;
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
-    public String getPayStackApi() {
-        return payStackApi;
-    }
 
-    public void setPayStackApi(String payStackApi) {
-        this.payStackApi = payStackApi;
-    }
-
-    public String getPayStackUrl() {
-        return payStackUrl;
-    }
-
-    public void setPayStackUrl(String payStackUrl) {
-        this.payStackUrl = payStackUrl;
-    }
-
-    public String getStackUrl() {
-        return stackUrl;
-    }
-
-    public void setStackUrl(String stackUrl) {
-        this.stackUrl = stackUrl;
-    }
 }
