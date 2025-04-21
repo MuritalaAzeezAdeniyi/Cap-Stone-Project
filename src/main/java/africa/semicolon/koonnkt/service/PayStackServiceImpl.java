@@ -19,6 +19,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,13 +32,20 @@ import java.net.URI;
 public class PayStackServiceImpl implements PaystackService {
     @Autowired
     private PostRideServiceImpl postRideService;
+//
+//    final private ConfigSecurity configSecurity;
+//
+//    public PayStackServiceImpl(ConfigSecurity configSecurity) {
+//        this.configSecurity = configSecurity;
+//    }
+    @Value("${paystack.api.key}")
+    private String payStackApi;
 
-    final private ConfigSecurity configSecurity;
+    @Value("${paystack.url}")
+    private String payStackUrl;
 
-    public PayStackServiceImpl(ConfigSecurity configSecurity) {
-        this.configSecurity = configSecurity;
-    }
-
+    @Value("${stack.url}")
+    private String stackUrl;
     @Override
 
     public PayStackApiResponse initializePayment(String email, Long rideId) throws IOException {
@@ -51,9 +59,9 @@ public class PayStackServiceImpl implements PaystackService {
         json.put("callback_url", "http://localhost:8080/verify-payment/" + rideId);
         RequestBody body = RequestBody.create(json.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
-                .url(configSecurity.getPayStackUrl())
+                .url(payStackUrl)
                 .post(body)
-                .addHeader("Authorization", "Bearer " + configSecurity.getPayStackApi())
+                .addHeader("Authorization", "Bearer " + payStackApi)
                 .addHeader("Content-Type", "application/json")
                 .build();
         try (Response response = client.newCall(request).execute()) {
@@ -68,10 +76,10 @@ public class PayStackServiceImpl implements PaystackService {
     public PayStackResponse makePayment(PayStackRequest request) throws IOException {
       request.setAmount(request.getAmount().multiply(BigDecimal.valueOf(100)));
 
-        URI uri = URI.create(configSecurity.getPayStackUrl());
+        URI uri = URI.create(payStackUrl);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders .setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        httpHeaders .setBearerAuth(configSecurity.getPayStackApi());
+        httpHeaders .setBearerAuth(payStackApi);
 
         RequestEntity<PayStackRequest> requestEntity = RequestEntity
                 .post(uri)
@@ -128,10 +136,10 @@ public class PayStackServiceImpl implements PaystackService {
 //            return false;
 //        }
 
-        URI uri = URI.create(configSecurity.getStackUrl() + "/" + reference);
+        URI uri = URI.create(stackUrl + "/" + reference);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        httpHeaders.setBearerAuth(configSecurity.getPayStackApi());
+        httpHeaders.setBearerAuth(payStackApi);
 
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(uri)
